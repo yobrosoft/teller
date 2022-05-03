@@ -1,8 +1,0 @@
-load("@io_bazel_rules_go//go:def.bzl", "go_library")
-
-go_library(
-    name = "statement",
-    srcs = ["statement.go"],
-    importpath = "github.com/yobrosoft/teller/pkg/statement",
-    visibility = ["//visibility:public"],
-)
