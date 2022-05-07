@@ -20,8 +20,12 @@ var (
 	startingToken = "NEW TRANSACTIONS"
 )
 
-func ParseStatement(in string) (*statement.Statement, error) {
-	f, r, err := pdf.Open(in)
+// Parser is a DBS bank statement parser.
+type Parser struct{}
+
+// Parse implements statement.Parser
+func (p *Parser) Parse(path string) (*statement.Statement, error) {
+	f, r, err := pdf.Open(path)
 	defer f.Close()
 	if err != nil {
 		return nil, err

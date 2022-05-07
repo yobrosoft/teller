@@ -2,12 +2,8 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
-	"os"
-	"path/filepath"
 
 	"github.com/spf13/cobra"
-	"github.com/yobrosoft/teller/pkg/dbs"
 	"github.com/yobrosoft/teller/pkg/statement"
 )
 
@@ -21,41 +17,9 @@ func totalCmd() *cobra.Command {
 }
 
 func runTotal(cmd *cobra.Command, args []string) error {
-	var (
-		stmts []*statement.Statement
-		files []string
-	)
-
-	for _, a := range args {
-		info, err := os.Stat(a)
-		if err != nil {
-			return fmt.Errorf("failed to stat %s: %w", a, err)
-		}
-
-		if !info.IsDir() {
-			files = append(files, a)
-			continue
-		}
-
-		fl, err := ioutil.ReadDir(a)
-		if err != nil {
-			return err
-		}
-
-		for _, f := range fl {
-			files = append(files, filepath.Join(a, f.Name()))
-		}
-	}
-
-	for _, f := range files {
-		if filepath.Ext(f) != ".pdf" {
-			continue
-		}
-		s, err := dbs.ParseStatement(f)
-		if err != nil {
-			return fmt.Errorf("failed to parse statement %s: %w", f, err)
-		}
-		stmts = append(stmts, s)
+	stmts, err := statement.ParseFiles(parser, args...)
+	if err != nil {
+		return fmt.Errorf("failed to parse statements: %w", err)
 	}
 
 	var total, carry float64
